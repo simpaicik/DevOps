@@ -1,0 +1,18 @@
+:root { --bg: #f7f7f8; --fg: #1d1d1f; --accent: #2563eb; --muted: #6b7280; --border: #e5e7eb; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+header, main { max-width: 960px; margin: 0 auto; padding: 16px; }
+header h1 { margin: 0; } header h1 a { color: inherit; text-decoration: none; }
+header p { margin: 4px 0 0; color: var(--muted); }
+form.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; align-items: end;
+  background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+label { display: flex; flex-direction: column; font-size: 14px; gap: 4px; }
+input, select, button { font: inherit; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; }
+button { background: var(--accent); color: #fff; border: none; cursor: pointer; }
+table { width: 100%; border-collapse: collapse; margin-top: 16px; background: #fff; }
+th, td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; }
+td.num, th.num { text-align: right; }
+.flash { padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; }
+.flash.error { background: #fee2e2; } .flash.success { background: #dcfce7; }
+.summary { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-top: 16px; }
+@media (max-width: 600px) { table { font-size: 13px; } th, td { padding: 6px 4px; } }

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Yeni antrenman kaydı</h2>
+<form class="grid" method="post" action="{{ url_for('main.add_workout') }}">
+  <label>Tarih <input type="date" name="date" value="{{ today }}" required></label>
+  <label>Hareket <input name="exercise" list="exercise-list" placeholder="Bench Press" required></label>
+  <label>Ekipman / Makine <input name="equipment" list="equipment-list" placeholder="Barbell" required></label>
+  <label>Set <input type="number" name="sets" min="1" value="3" required></label>
+  <label>Tekrar <input type="number" name="reps" min="1" value="10" required></label>
+  <label>Ağırlık (kg) <input type="number" name="weight_kg" min="0" step="0.5" required></label>
+  <button type="submit">Kaydet</button>
+</form>
+<datalist id="exercise-list">{% for e in exercises %}<option value="{{ e }}">{% endfor %}</datalist>
+<datalist id="equipment-list">{% for e in equipment %}<option value="{{ e }}">{% endfor %}</datalist>
+
+<h2>Kayıtlar</h2>
+{% if workouts %}
+<table id="workouts">
+  <thead><tr><th>Tarih</th><th>Hareket</th><th>Ekipman</th>
+    <th class="num">Set</th><th class="num">Tekrar</th><th class="num">Kg</th><th class="num">Hacim (kg)</th></tr></thead>
+  <tbody>
+  {% for w in workouts %}
+    <tr><td>{{ w.date }}</td><td>{{ w.exercise }}</td><td>{{ w.equipment }}</td>
+      <td class="num">{{ w.sets }}</td><td class="num">{{ w.reps }}</td>
+      <td class="num">{{ '%g' % w.weight_kg }}</td>
+      <td class="num volume">{{ '%g' % volume(w.sets, w.reps, w.weight_kg) }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<div class="summary">
+  <h3>Günlük toplam hacim</h3>
+  <table id="daily-totals">
+    <thead><tr><th>Tarih</th><th class="num">Toplam hacim (kg)</th></tr></thead>
+    <tbody>{% for d, total in daily.items() %}
+      <tr><td>{{ d }}</td><td class="num">{{ '%g' % total }}</td></tr>{% endfor %}</tbody>
+  </table>
+  <h3>Hareket bazında toplam hacim</h3>
+  <table id="exercise-totals">
+    <thead><tr><th>Hareket</th><th class="num">Toplam hacim (kg)</th></tr></thead>
+    <tbody>{% for ex, total in by_exercise.items() %}
+      <tr><td>{{ ex }}</td><td class="num">{{ '%g' % total }}</td></tr>{% endfor %}</tbody>
+  </table>
+</div>
+{% else %}
+<p>Henüz kayıt yok. Yukarıdaki formdan ilk antrenmanınızı ekleyin.</p>
+{% endif %}
+{% endblock %}
