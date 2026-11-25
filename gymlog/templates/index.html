@@ -1,4 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-  <p>Henüz kayıt yok. Özellikler geliştirildikçe burada görünecek.</p>
+<h2>Yeni antrenman kaydı</h2>
+<form class="grid" method="post" action="{{ url_for('main.add_workout') }}">
+  <label>Tarih <input type="date" name="date" value="{{ today }}" required></label>
+  <label>Hareket <input name="exercise" list="exercise-list" placeholder="Bench Press" required></label>
+  <label>Ekipman / Makine <input name="equipment" list="equipment-list" placeholder="Barbell" required></label>
+  <label>Set <input type="number" name="sets" min="1" value="3" required></label>
+  <label>Tekrar <input type="number" name="reps" min="1" value="10" required></label>
+  <label>Ağırlık (kg) <input type="number" name="weight_kg" min="0" step="0.5" required></label>
+  <button type="submit">Kaydet</button>
+</form>
+<datalist id="exercise-list">{% for e in exercises %}<option value="{{ e }}">{% endfor %}</datalist>
+<datalist id="equipment-list">{% for e in equipment %}<option value="{{ e }}">{% endfor %}</datalist>
+
+<h2>Kayıtlar</h2>
+{% if workouts %}
+<table id="workouts">
+  <thead><tr><th>Tarih</th><th>Hareket</th><th>Ekipman</th>
+    <th class="num">Set</th><th class="num">Tekrar</th><th class="num">Kg</th></tr></thead>
+  <tbody>
+  {% for w in workouts %}
+    <tr><td>{{ w.date }}</td><td>{{ w.exercise }}</td><td>{{ w.equipment }}</td>
+      <td class="num">{{ w.sets }}</td><td class="num">{{ w.reps }}</td>
+      <td class="num">{{ '%g' % w.weight_kg }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>Henüz kayıt yok. Yukarıdaki formdan ilk antrenmanınızı ekleyin.</p>
+{% endif %}
 {% endblock %}
