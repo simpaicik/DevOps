@@ -10,7 +10,7 @@ kaydetmesini, her kaydın **antrenman hacmini** (set × tekrar × kg) görmesini
 takip etmesini sağlayan basit bir web uygulamasıdır.
 
 ## Pano (board)
-- GitHub Projects panosu: **<PANO_BAĞLANTISI_BURAYA>**
+- GitHub Projects panosu: https://github.com/users/simpaicik/projects/1/views/1
 - Kart metinleri: [`docs/BOARD.md`](docs/BOARD.md)
 
 ## Teknolojiler
@@ -18,8 +18,8 @@ Python 3.10+, Flask, SQLite, pytest, GitHub Actions (CI)
 
 ## Çalıştırma
 ```bash
-git clone <DEPO_BAĞLANTISI>
-cd <depo-klasörü>
+git clone https://github.com/simpaicik/DevOps.git
+cd DevOps
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
