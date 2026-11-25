@@ -3,6 +3,7 @@ from datetime import date
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from .db import get_db
+from .volume import daily_totals, exercise_totals, workout_volume
 
 bp = Blueprint("main", __name__)
 
@@ -60,6 +61,9 @@ def index():
         workouts=workouts,
         exercises=exercises,
         equipment=DEFAULT_EQUIPMENT,
+        volume=workout_volume,
+        daily=daily_totals(workouts),
+        by_exercise=exercise_totals(workouts),
         today=date.today().isoformat(),
     )
 

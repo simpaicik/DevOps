@@ -33,3 +33,18 @@ Sıfırlamak için dosyayı silebilir ya da `flask --app gymlog init-db` çalı�
 pytest -v
 ```
 Her push'ta ve pull request'te GitHub Actions testleri otomatik çalıştırır (`.github/workflows/ci.yml`).
+
+## Özellikleri deneme
+
+### Özellik 1: Antrenman kaydı ekleme ve listeleme
+1. Uygulamayı çalıştırıp `http://127.0.0.1:5000` adresini açın.
+2. Formu doldurun, örneğin: Hareket `Bench Press`, Ekipman `Barbell`, Set `3`, Tekrar `10`, Kg `50`. Ardından **Kaydet**'e basın.
+3. Kayıt "Kayıtlar" tablosunda görünür. Sayfayı yenileyin ya da uygulamayı yeniden başlatın: kayıt yerinde durur.
+4. Set alanına `0` ya da Kg alanına negatif bir değer girip gönderin. Kayıt eklenmez ve hata mesajı gösterilir.
+
+### Özellik 2: Antrenman hacmi hesaplama
+1. Yukarıdaki kaydın **Hacim (kg)** sütununda `1500` (3 × 10 × 50) yazar.
+2. Aynı tarihe ikinci bir kayıt ekleyin, örneğin `Barbell Row`, 2 set × 10 tekrar × 50 kg (hacim 1000).
+3. **Günlük toplam hacim** tablosunda o gün için `2500` görünür. **Hareket bazında toplam hacim** tablosu her hareketin toplamını büyükten küçüğe listeler.
+
+Her iki özellik için otomatik testler: `tests/test_workouts.py`, `tests/test_volume.py`.

@@ -17,15 +17,31 @@
 {% if workouts %}
 <table id="workouts">
   <thead><tr><th>Tarih</th><th>Hareket</th><th>Ekipman</th>
-    <th class="num">Set</th><th class="num">Tekrar</th><th class="num">Kg</th></tr></thead>
+    <th class="num">Set</th><th class="num">Tekrar</th><th class="num">Kg</th><th class="num">Hacim (kg)</th></tr></thead>
   <tbody>
   {% for w in workouts %}
     <tr><td>{{ w.date }}</td><td>{{ w.exercise }}</td><td>{{ w.equipment }}</td>
       <td class="num">{{ w.sets }}</td><td class="num">{{ w.reps }}</td>
-      <td class="num">{{ '%g' % w.weight_kg }}</td></tr>
+      <td class="num">{{ '%g' % w.weight_kg }}</td>
+      <td class="num volume">{{ '%g' % volume(w.sets, w.reps, w.weight_kg) }}</td></tr>
   {% endfor %}
   </tbody>
 </table>
+
+<div class="summary">
+  <h3>Günlük toplam hacim</h3>
+  <table id="daily-totals">
+    <thead><tr><th>Tarih</th><th class="num">Toplam hacim (kg)</th></tr></thead>
+    <tbody>{% for d, total in daily.items() %}
+      <tr><td>{{ d }}</td><td class="num">{{ '%g' % total }}</td></tr>{% endfor %}</tbody>
+  </table>
+  <h3>Hareket bazında toplam hacim</h3>
+  <table id="exercise-totals">
+    <thead><tr><th>Hareket</th><th class="num">Toplam hacim (kg)</th></tr></thead>
+    <tbody>{% for ex, total in by_exercise.items() %}
+      <tr><td>{{ ex }}</td><td class="num">{{ '%g' % total }}</td></tr>{% endfor %}</tbody>
+  </table>
+</div>
 {% else %}
 <p>Henüz kayıt yok. Yukarıdaki formdan ilk antrenmanınızı ekleyin.</p>
 {% endif %}
