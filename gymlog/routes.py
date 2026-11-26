@@ -3,6 +3,7 @@ from datetime import date
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from .db import get_db
+from .records import best_lifts, personal_record_ids
 from .volume import daily_totals, exercise_totals, workout_volume
 
 bp = Blueprint("main", __name__)
@@ -64,6 +65,8 @@ def index():
         volume=workout_volume,
         daily=daily_totals(workouts),
         by_exercise=exercise_totals(workouts),
+        pr_ids=personal_record_ids(workouts),
+        best=best_lifts(workouts),
         today=date.today().isoformat(),
     )
 
@@ -77,13 +80,15 @@ def add_workout():
         return redirect(url_for("main.index"))
 
     db = get_db()
-    db.execute(
+    cur = db.execute(
         "INSERT INTO workouts (date, exercise, equipment, sets, reps, weight_kg)"
         " VALUES (:date, :exercise, :equipment, :sets, :reps, :weight_kg)",
         data,
     )
     db.commit()
     flash(f"{data['exercise']} kaydı eklendi.", "success")
+    if cur.lastrowid in personal_record_ids(db.execute("SELECT * FROM workouts").fetchall()):
+        flash(f"Yeni kişisel rekor! {data['exercise']}: {data['weight_kg']:g} kg", "pr")
     return redirect(url_for("main.index"))
 
 

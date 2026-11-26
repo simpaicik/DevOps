@@ -20,7 +20,7 @@
     <th class="num">Set</th><th class="num">Tekrar</th><th class="num">Kg</th><th class="num">Hacim (kg)</th></tr></thead>
   <tbody>
   {% for w in workouts %}
-    <tr><td>{{ w.date }}</td><td>{{ w.exercise }}</td><td>{{ w.equipment }}</td>
+    <tr><td>{{ w.date }}</td><td>{{ w.exercise }}{% if w.id in pr_ids %} <span class="badge-pr" title="Kişisel rekor">PR</span>{% endif %}</td><td>{{ w.equipment }}</td>
       <td class="num">{{ w.sets }}</td><td class="num">{{ w.reps }}</td>
       <td class="num">{{ '%g' % w.weight_kg }}</td>
       <td class="num volume">{{ '%g' % volume(w.sets, w.reps, w.weight_kg) }}</td></tr>
@@ -34,6 +34,12 @@
     <thead><tr><th>Tarih</th><th class="num">Toplam hacim (kg)</th></tr></thead>
     <tbody>{% for d, total in daily.items() %}
       <tr><td>{{ d }}</td><td class="num">{{ '%g' % total }}</td></tr>{% endfor %}</tbody>
+  </table>
+  <h3>Kişisel rekorlar (en yüksek ağırlık)</h3>
+  <table id="best-lifts">
+    <thead><tr><th>Hareket</th><th class="num">En yüksek (kg)</th></tr></thead>
+    <tbody>{% for ex, kg in best.items() %}
+      <tr><td>{{ ex }}</td><td class="num">{{ '%g' % kg }}</td></tr>{% endfor %}</tbody>
   </table>
   <h3>Hareket bazında toplam hacim</h3>
   <table id="exercise-totals">

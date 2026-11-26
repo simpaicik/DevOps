@@ -16,3 +16,5 @@ td.num, th.num { text-align: right; }
 .flash.error { background: #fee2e2; } .flash.success { background: #dcfce7; }
 .summary { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-top: 16px; }
 @media (max-width: 600px) { table { font-size: 13px; } th, td { padding: 6px 4px; } }
+.badge-pr { background: #f59e0b; color: #fff; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 999px; }
+.flash.pr { background: #fef3c7; }

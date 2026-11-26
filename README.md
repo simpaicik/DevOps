@@ -47,4 +47,13 @@ Her push'ta ve pull request'te GitHub Actions testleri otomatik çalıştırır 
 2. Aynı tarihe ikinci bir kayıt ekleyin, örneğin `Barbell Row`, 2 set × 10 tekrar × 50 kg (hacim 1000).
 3. **Günlük toplam hacim** tablosunda o gün için `2500` görünür. **Hareket bazında toplam hacim** tablosu her hareketin toplamını büyükten küçüğe listeler.
 
-Her iki özellik için otomatik testler: `tests/test_workouts.py`, `tests/test_volume.py`.
+### Özellik 3: Kişisel rekor (PR) tespiti
+1. `Bench Press` için `2026-11-01` tarihli, 80 kg'lık bir kayıt ekleyin.
+2. Aynı hareket için daha yeni bir tarihte 85 kg'lık kayıt ekleyin. "Yeni kişisel rekor!" mesajı çıkar ve kayıt tabloda turuncu **PR** rozetiyle işaretlenir.
+3. Üçüncü bir kayıt olarak 80 kg (ya da 85 kg) girin. Bu kayıt PR sayılmaz, rozet görünmez.
+4. **Kişisel rekorlar** tablosunda her hareketin en yüksek ağırlığı listelenir.
+
+Kurallar: hareketin ilk kaydı karşılaştırılacak önceki değer olmadığından PR sayılmaz, eşit ağırlık rekor değildir,
+kayıtlar giriş sırasına değil tarihe göre değerlendirilir.
+
+Otomatik testler: `tests/test_workouts.py`, `tests/test_volume.py`, `tests/test_records.py`.
