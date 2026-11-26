@@ -3,6 +3,8 @@ from datetime import date
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from .db import get_db
+from .exercises import EXERCISES_BY_GROUP
+from .records import best_lifts, personal_record_ids
 from .volume import daily_totals, exercise_totals, workout_volume
 
 bp = Blueprint("main", __name__)
@@ -11,6 +13,16 @@ DEFAULT_EQUIPMENT = [
     "Barbell", "Dumbbell", "Smith Machine", "Cable", "Leg Press Makinesi",
     "Chest Press Makinesi", "Lat Pulldown Makinesi", "Vücut Ağırlığı",
 ]
+
+
+def exercise_options(used):
+    """Form önerileri: (hareket, grup) çiftleri. Kullanıcının listede olmayan
+    kendi hareketleri en başta, ardından hazır liste kas grubuna göre gelir."""
+    known = {name.casefold() for names in EXERCISES_BY_GROUP.values() for name in names}
+    options = [(name, "Kendi hareketin") for name in used if name.casefold() not in known]
+    for group, names in EXERCISES_BY_GROUP.items():
+        options.extend((name, group) for name in names)
+    return options
 
 
 def validate_workout(form):
@@ -59,11 +71,13 @@ def index():
     return render_template(
         "index.html",
         workouts=workouts,
-        exercises=exercises,
+        exercises=exercise_options(exercises),
         equipment=DEFAULT_EQUIPMENT,
         volume=workout_volume,
         daily=daily_totals(workouts),
         by_exercise=exercise_totals(workouts),
+        pr_ids=personal_record_ids(workouts),
+        best=best_lifts(workouts),
         today=date.today().isoformat(),
     )
 
@@ -77,13 +91,15 @@ def add_workout():
         return redirect(url_for("main.index"))
 
     db = get_db()
-    db.execute(
+    cur = db.execute(
         "INSERT INTO workouts (date, exercise, equipment, sets, reps, weight_kg)"
         " VALUES (:date, :exercise, :equipment, :sets, :reps, :weight_kg)",
         data,
     )
     db.commit()
     flash(f"{data['exercise']} kaydı eklendi.", "success")
+    if cur.lastrowid in personal_record_ids(db.execute("SELECT * FROM workouts").fetchall()):
+        flash(f"Yeni kişisel rekor! {data['exercise']}: {data['weight_kg']:g} kg", "pr")
     return redirect(url_for("main.index"))
 
 
