@@ -60,7 +60,7 @@ Her push'ta ve pull request'te GitHub Actions (`.github/workflows/ci.yml`) iki i
 
 ### Özellik 1: Antrenman kaydı ekleme ve listeleme
 1. Uygulamayı çalıştırıp `http://127.0.0.1:5000` adresini açın.
-2. Formu doldurun, örneğin: Hareket `Bench Press`, Ekipman `Barbell`, Set `3`, Tekrar `10`, Kg `50`. Ardından **Kaydet**'e basın.
+2. Formu doldurun. **Hareket** alanına tıklayınca kas grubuna göre ayrılmış ~200 hazır hareket önerilir (yazdıkça süzülür); listede olmayan bir hareketi de yazabilirsiniz, sonraki kayıtlarda o da önerilir. Örneğin: Hareket `Bench Press`, Ekipman `Barbell`, Set `3`, Tekrar `10`, Kg `50`. Ardından **Kaydet**'e basın.
 3. Kayıt "Kayıtlar" tablosunda görünür. Sayfayı yenileyin ya da uygulamayı yeniden başlatın: kayıt yerinde durur.
 4. Set alanına `0` ya da Kg alanına negatif bir değer girip gönderin. Kayıt eklenmez ve hata mesajı gösterilir.
 

@@ -3,6 +3,7 @@ from datetime import date
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from .db import get_db
+from .exercises import EXERCISES_BY_GROUP
 from .records import best_lifts, personal_record_ids
 from .volume import daily_totals, exercise_totals, workout_volume
 
@@ -12,6 +13,16 @@ DEFAULT_EQUIPMENT = [
     "Barbell", "Dumbbell", "Smith Machine", "Cable", "Leg Press Makinesi",
     "Chest Press Makinesi", "Lat Pulldown Makinesi", "Vücut Ağırlığı",
 ]
+
+
+def exercise_options(used):
+    """Form önerileri: (hareket, grup) çiftleri. Kullanıcının listede olmayan
+    kendi hareketleri en başta, ardından hazır liste kas grubuna göre gelir."""
+    known = {name.casefold() for names in EXERCISES_BY_GROUP.values() for name in names}
+    options = [(name, "Kendi hareketin") for name in used if name.casefold() not in known]
+    for group, names in EXERCISES_BY_GROUP.items():
+        options.extend((name, group) for name in names)
+    return options
 
 
 def validate_workout(form):
@@ -60,7 +71,7 @@ def index():
     return render_template(
         "index.html",
         workouts=workouts,
-        exercises=exercises,
+        exercises=exercise_options(exercises),
         equipment=DEFAULT_EQUIPMENT,
         volume=workout_volume,
         daily=daily_totals(workouts),
