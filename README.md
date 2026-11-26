@@ -9,6 +9,8 @@ notlarında tutar. Bu yüzden zaman içinde gerçekten ilerleyip ilerlemedikleri
 kaydetmesini, her kaydın **antrenman hacmini** (set × tekrar × kg) görmesini ve gelişimini
 takip etmesini sağlayan basit bir web uygulamasıdır.
 
+![GymLog ana sayfa](docs/ekran-goruntusu.png)
+
 ## Pano (board)
 - GitHub Projects panosu: https://github.com/users/simpaicik/projects/1/views/1
 - Kart metinleri: [`docs/BOARD.md`](docs/BOARD.md)
