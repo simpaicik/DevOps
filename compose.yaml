@@ -1,0 +1,15 @@
+services:
+  web:
+    build: .
+    image: gymlog:latest
+    ports:
+      - "5000:5000"
+    environment:
+      # Gerçek kullanımda kendi gizli anahtarınızı verin: SECRET_KEY=... docker compose up
+      SECRET_KEY: ${SECRET_KEY:-change-me}
+    volumes:
+      - gymlog-data:/app/instance
+    restart: unless-stopped
+
+volumes:
+  gymlog-data:

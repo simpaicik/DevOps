@@ -14,7 +14,7 @@ takip etmesini sağlayan basit bir web uygulamasıdır.
 - Kart metinleri: [`docs/BOARD.md`](docs/BOARD.md)
 
 ## Teknolojiler
-Python 3.10+, Flask, SQLite, pytest, GitHub Actions (CI)
+Python 3.10+, Flask, SQLite, pytest, Docker (gunicorn), GitHub Actions (CI)
 
 ## Çalıştırma
 ```bash
@@ -28,11 +28,31 @@ flask --app gymlog run              # http://127.0.0.1:5000
 Veritabanı (`instance/gymlog.db`) ilk çalıştırmada otomatik oluşturulur.
 Sıfırlamak için dosyayı silebilir ya da `flask --app gymlog init-db` çalıştırabilirsiniz.
 
+## Docker ile çalıştırma
+Bilgisayarda yalnızca [Docker](https://docs.docker.com/get-docker/) kurulu olması yeterlidir; Python kurmanız gerekmez.
+
+```bash
+docker compose up --build          # http://127.0.0.1:5000
+```
+Durdurmak için `Ctrl+C` ya da `docker compose down`. Kayıtlar `gymlog-data` adlı Docker volume'ünde
+tutulur; konteyner silinip yeniden oluşturulsa da kaybolmaz (`docker compose down -v` volume'ü de siler).
+
+Compose kullanmadan:
+```bash
+docker build -t gymlog .
+docker run -d --name gymlog -p 5000:5000 -v gymlog-data:/app/instance gymlog
+docker ps                           # STATUS sütununda bir süre sonra "(healthy)" görünür
+```
+İmaj `python:3.12-slim` tabanlıdır, uygulamayı `gunicorn` ile root olmayan bir kullanıcıyla çalıştırır
+ve `/health` uç noktasını Docker `HEALTHCHECK` ile yoklar.
+
 ## Testler
 ```bash
 pytest -v
 ```
-Her push'ta ve pull request'te GitHub Actions testleri otomatik çalıştırır (`.github/workflows/ci.yml`).
+Her push'ta ve pull request'te GitHub Actions (`.github/workflows/ci.yml`) iki iş çalıştırır:
+1. **test**: bağımlılıkları kurar ve `pytest` ile tüm testleri çalıştırır.
+2. **docker**: testler geçerse Docker imajını derler, konteyneri başlatır ve `/health` uç noktasının yanıt verdiğini doğrular.
 
 ## Özellikleri deneme
 
