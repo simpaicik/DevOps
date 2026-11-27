@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}İlerleme · GymLog{% endblock %}
+
+{% macro chart(c, id, title, unit, cls) %}
+<div class="card chart-card {{ cls }}">
+  <h3>{{ title }}</h3>
+  <svg id="{{ id }}" class="chart" viewBox="0 0 {{ c.width }} {{ c.height }}" role="img" aria-label="{{ title }} grafiği, {{ c.points | length }} nokta">
+    {% for t in c.ticks %}
+    <line class="grid" x1="{{ c.left }}" x2="{{ c.right }}" y1="{{ t.y }}" y2="{{ t.y }}"/>
+    <text class="tick" x="{{ c.left - 8 }}" y="{{ t.y }}" text-anchor="end" dominant-baseline="middle">{{ '{:,.0f}'.format(t.value).replace(',', '.') if t.value >= 1000 else '%g' % t.value }}</text>
+    {% endfor %}
+    {% for l in c.labels %}
+    <text class="tick" x="{{ l.x }}" y="{{ c.bottom + 24 }}" text-anchor="middle">{{ l.text }}</text>
+    {% endfor %}
+    {% if c.points | length > 1 %}
+    <polyline class="area" points="{{ c.points[0].x }},{{ c.bottom }} {{ c.line }} {{ c.points[-1].x }},{{ c.bottom }}"/>
+    <polyline class="line" points="{{ c.line }}"/>
+    {% endif %}
+    {% for p in c.points %}
+    <g class="pt"><circle class="point" cx="{{ p.x }}" cy="{{ p.y }}" r="4.5"/><circle class="hit" cx="{{ p.x }}" cy="{{ p.y }}" r="14"><title>{{ p.date }}: {{ '%g' % p.value }} {{ unit }}</title></circle></g>
+    {% endfor %}
+  </svg>
+</div>
+{% endmacro %}
+
+{% block content %}
+<section class="card">
+  <div class="card-head">
+    <h2>İlerleme grafiği</h2>
+    {% if choices %}
+    <form class="picker" method="get" action="{{ url_for('main.progress') }}">
+      <label>Hareket
+        <select name="exercise" onchange="this.form.submit()">
+          {% if selected and selected not in choices %}<option selected>{{ selected }}</option>{% endif %}
+          {% for ex in choices %}<option{% if ex == selected %} selected{% endif %}>{{ ex }}</option>{% endfor %}
+        </select>
+      </label>
+      <noscript><button type="submit">Göster</button></noscript>
+    </form>
+    {% endif %}
+  </div>
+
+  {% if series %}
+  {% set first, last = series[0], series[-1] %}
+  {% set diff = last.max_weight - first.max_weight %}
+  <div class="stats stats-inline">
+    <div class="stat"><span class="stat-label">Antrenman günü</span><span class="stat-value">{{ series | length }}</span></div>
+    <div class="stat"><span class="stat-label">En yüksek</span><span class="stat-value">{{ '%g' % (series | map(attribute='max_weight') | max) }}<small> kg</small></span></div>
+    <div class="stat stat-accent"><span class="stat-label">İlk → son</span><span class="stat-value">{{ '+' if diff > 0 else '' }}{{ '%g' % diff }}<small> kg</small></span></div>
+    <div class="stat"><span class="stat-label">Toplam hacim</span><span class="stat-value">{{ '{:,.0f}'.format(series | sum(attribute='volume')).replace(',', '.') }}<small> kg</small></span></div>
+  </div>
+  {% else %}
+  <div class="empty" id="no-data">
+    <p><strong>Veri yok.</strong></p>
+    {% if selected %}<p>“{{ selected }}” için henüz kayıt bulunmuyor.</p>{% endif %}
+    <p><a href="{{ url_for('main.index') }}">Kayıtlar sayfasından</a> antrenman ekleyince gelişiminiz burada çizilir.</p>
+  </div>
+  {% endif %}
+</section>
+
+{% if series %}
+<section class="chart-grid">
+  {{ chart(weight_chart, "weight-chart", "En yüksek ağırlık (kg)", "kg", "c-weight") }}
+  {{ chart(volume_chart, "volume-chart", "Toplam hacim (kg)", "kg", "c-volume") }}
+</section>
+
+<section class="card">
+  <h3>Günlük özet <span class="hint">{{ selected }}</span></h3>
+  <div class="table-wrap">
+  <table id="progress-table">
+    <thead><tr><th>Tarih</th><th class="num">Toplam set</th><th class="num">En yüksek (kg)</th><th class="num">Hacim (kg)</th></tr></thead>
+    <tbody>{% for p in series | reverse %}
+      <tr><td>{{ p.date }}</td><td class="num">{{ p.sets }}</td><td class="num">{{ '%g' % p.max_weight }}</td><td class="num volume">{{ '%g' % p.volume }}</td></tr>{% endfor %}</tbody>
+  </table>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

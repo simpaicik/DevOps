@@ -4,6 +4,8 @@
 
 ![GymLog ana sayfa](docs/ekran-goruntusu.png)
 
+![GymLog ilerleme grafiği](docs/ilerleme-grafigi.png)
+
 ## Problem ve hedef kullanıcı
 Düzenli spor salonuna giden kişiler hangi makinede ya da ekipmanla hangi hareketi kaç set,
 kaç tekrar ve kaç kiloyla yaptıklarını genellikle not defterinde ya da dağınık telefon
@@ -24,10 +26,10 @@ görmelerini ve kişisel rekorlarıyla gelişimlerini takip etmelerini sağlar.
 | [#1](https://github.com/simpaicik/DevOps/issues/1) | Antrenman kaydı ekleme ve listeleme | Tamamlandı (Özellik 1) |
 | [#2](https://github.com/simpaicik/DevOps/issues/2) | Antrenman hacmi hesaplama | Tamamlandı (Özellik 2) |
 | [#5](https://github.com/simpaicik/DevOps/issues/5) | Kişisel rekor (PR) tespiti | Tamamlandı (ek özellik) |
+| [#4](https://github.com/simpaicik/DevOps/issues/4) | Hareket bazlı gelişim grafiği | Tamamlandı (ek özellik) |
+| [#6](https://github.com/simpaicik/DevOps/issues/6) | Kayıt düzenleme ve silme | Tamamlandı (ek özellik) |
 | [#7](https://github.com/simpaicik/DevOps/issues/7) | Ekipman / hareket listesi yönetimi | Devam Ediyor (hazır hareket listesi eklendi) |
 | [#3](https://github.com/simpaicik/DevOps/issues/3) | Hareket ve tarihe göre filtreleme | Yapılacak |
-| [#4](https://github.com/simpaicik/DevOps/issues/4) | Hareket bazlı gelişim grafiği | Yapılacak |
-| [#6](https://github.com/simpaicik/DevOps/issues/6) | Kayıt düzenleme ve silme | Yapılacak |
 
 ## Teknolojiler
 Python 3.10+, Flask, SQLite, pytest, Docker (gunicorn), GitHub Actions (CI)
@@ -120,12 +122,37 @@ kayıtlar giriş sırasına değil tarihe göre değerlendirilir.
 3. Listede olmayan bir hareket (ör. `Salonumdaki Özel Makine`) yazıp kaydedin, sonra kutuya tekrar tıklayın.
    - **Beklenen:** Yeni hareket listenin başında "Kendi hareketin" etiketiyle önerilir.
 
+### Ek özellik: Kayıt düzenleme ve silme ([#6](https://github.com/simpaicik/DevOps/issues/6))
+1. Aynı tarihe iki kayıt ekleyin: `Bench Press` 3 × 10 × 50 kg (1500) ve `Barbell Row` 2 × 10 × 50 kg (1000).
+   **Günlük toplam hacim** tablosunda o gün `2500` görünür.
+2. **Kayıtlar** tablosunda `Barbell Row` satırının sonundaki çöp kutusu simgesine basın ve onaylayın.
+   - **Beklenen:** "kaydı silindi" mesajı çıkar, kayıt listeden kalkar ve günün toplamı `1500` olur.
+3. `Bench Press` satırındaki kalem simgesine basın. Açılan formda Set `4`, Tekrar `8`, Ağırlık `60` yapıp **Değişiklikleri kaydet**'e basın.
+   - **Beklenen:** "kaydı güncellendi" mesajı çıkar, satırın hacmi `1920` (4 × 8 × 60) olur, günlük toplam da `1920`'ye güncellenir.
+4. Düzenleme formunda Set'i `0` yapıp kaydetmeyi deneyin.
+   - **Beklenen:** "Set en az 1 olmalı." hatası gösterilir, kayıt değişmez.
+
+Düzenleme ve silme sonrasında PR rozetleri ve kişisel rekorlar da yeniden hesaplanır.
+
+### Ek özellik: Hareket bazlı gelişim grafiği ([#4](https://github.com/simpaicik/DevOps/issues/4))
+1. `Bench Press` için üç farklı tarihte kayıt ekleyin (ör. `2026-11-01` 80 kg, `2026-11-08` 85 kg, `2026-11-15` 90 kg).
+2. Üst menüden **İlerleme** sayfasına geçin ve **Hareket** listesinden `Bench Press`'i seçin.
+   (Kişisel rekorlar tablosundaki hareket adına tıklayarak da gelebilirsiniz.)
+   - **Beklenen:** **En yüksek ağırlık** ve **Toplam hacim** grafiklerinde 3 nokta görünür; noktanın üzerine gelince tarih ve değer yazar.
+     Üstte antrenman günü, en yüksek ağırlık, ilk→son farkı (`+10 kg`) ve toplam hacim özetlenir, altta günlük özet tablosu vardır.
+3. Adres çubuğuna `http://127.0.0.1:5000/progress?exercise=Deadlift` yazın (kaydı olmayan bir hareket).
+   - **Beklenen:** "Veri yok." mesajı gösterilir, grafik çizilmez.
+
+Aynı gün birden fazla set girildiyse grafikte o günün en yüksek ağırlığı ve toplam hacmi tek nokta olarak gösterilir.
+Grafikler sunucu tarafında SVG olarak çizilir, internet bağlantısı ya da JavaScript kütüphanesi gerekmez.
+
 ## Testler ve CI
 ```bash
 pytest -v
 ```
 Her özelliğin kabul kriterleri otomatik testlerle de doğrulanır: `tests/test_workouts.py` (#1),
-`tests/test_volume.py` (#2), `tests/test_records.py` (#5), `tests/test_exercises.py` (#7).
+`tests/test_volume.py` (#2), `tests/test_records.py` (#5), `tests/test_progress.py` (#4),
+`tests/test_edit_delete.py` (#6), `tests/test_exercises.py` (#7).
 
 Her push'ta ve pull request'te GitHub Actions (`.github/workflows/ci.yml`) iki iş çalıştırır:
 1. **test**: bağımlılıkları kurar ve `pytest` ile tüm testleri çalıştırır.
@@ -133,7 +160,7 @@ Her push'ta ve pull request'te GitHub Actions (`.github/workflows/ci.yml`) iki i
 
 ## Proje yapısı
 ```
-gymlog/            Flask uygulaması (routes, veritabanı, hacim ve rekor hesapları, şablonlar, CSS)
+gymlog/            Flask uygulaması (routes, veritabanı, hacim, rekor ve ilerleme hesapları, şablonlar, CSS)
 tests/             pytest testleri
 docs/BOARD.md      Pano kartlarının metinleri
 Dockerfile         Üretim imajı (gunicorn)

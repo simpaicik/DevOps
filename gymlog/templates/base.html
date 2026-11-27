@@ -17,7 +17,10 @@
         </span>
         <span>GymLog</span>
       </a>
-      <p class="tagline">Antrenman hacmi ve gelişim takipçisi</p>
+      <nav class="nav" aria-label="Sayfalar">
+        <a href="{{ url_for('main.index') }}"{% if request.endpoint in ('main.index', 'main.edit_workout') %} aria-current="page"{% endif %}>Kayıtlar</a>
+        <a href="{{ url_for('main.progress') }}"{% if request.endpoint == 'main.progress' %} aria-current="page"{% endif %}>İlerleme</a>
+      </nav>
     </div>
   </header>
   <main class="container">
