@@ -1,9 +1,10 @@
 from datetime import date
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 
 from .db import get_db
 from .exercises import EXERCISES_BY_GROUP
+from .progress import build_chart, progress_series
 from .records import best_lifts, personal_record_ids
 from .volume import daily_totals, exercise_totals, workout_volume
 
@@ -59,19 +60,29 @@ def validate_workout(form):
     return data, errors
 
 
+def used_exercises(db):
+    return [r["exercise"] for r in db.execute(
+        "SELECT DISTINCT exercise FROM workouts ORDER BY exercise"
+    )]
+
+
+def get_workout_or_404(workout_id):
+    row = get_db().execute("SELECT * FROM workouts WHERE id = ?", (workout_id,)).fetchone()
+    if row is None:
+        abort(404)
+    return row
+
+
 @bp.route("/")
 def index():
     db = get_db()
     workouts = db.execute(
         "SELECT * FROM workouts ORDER BY date DESC, id DESC"
     ).fetchall()
-    exercises = [r["exercise"] for r in db.execute(
-        "SELECT DISTINCT exercise FROM workouts ORDER BY exercise"
-    )]
     return render_template(
         "index.html",
         workouts=workouts,
-        exercises=exercise_options(exercises),
+        exercises=exercise_options(used_exercises(db)),
         equipment=DEFAULT_EQUIPMENT,
         volume=workout_volume,
         daily=daily_totals(workouts),
@@ -101,6 +112,65 @@ def add_workout():
     if cur.lastrowid in personal_record_ids(db.execute("SELECT * FROM workouts").fetchall()):
         flash(f"Yeni kişisel rekor! {data['exercise']}: {data['weight_kg']:g} kg", "pr")
     return redirect(url_for("main.index"))
+
+
+@bp.route("/workouts/<int:workout_id>/edit", methods=["GET", "POST"])
+def edit_workout(workout_id):
+    """Kayıtlı bir seti düzenleme formu (GET) ve kaydetme (POST)."""
+    workout = get_workout_or_404(workout_id)
+    db = get_db()
+    if request.method == "POST":
+        data, errors = validate_workout(request.form)
+        if not errors:
+            db.execute(
+                "UPDATE workouts SET date = :date, exercise = :exercise, equipment = :equipment,"
+                " sets = :sets, reps = :reps, weight_kg = :weight_kg WHERE id = :id",
+                dict(data, id=workout_id),
+            )
+            db.commit()
+            flash(f"{data['exercise']} kaydı güncellendi.", "success")
+            return redirect(url_for("main.index"))
+        for e in errors:
+            flash(e, "error")
+        workout = dict(workout, **{k: request.form.get(k, "") for k in data})
+    return render_template(
+        "edit.html",
+        workout=workout,
+        exercises=exercise_options(used_exercises(db)),
+        equipment=DEFAULT_EQUIPMENT,
+    )
+
+
+@bp.post("/workouts/<int:workout_id>/delete")
+def delete_workout(workout_id):
+    workout = get_workout_or_404(workout_id)
+    db = get_db()
+    db.execute("DELETE FROM workouts WHERE id = ?", (workout_id,))
+    db.commit()
+    flash(f"{workout['exercise']} ({workout['date']}) kaydı silindi.", "success")
+    return redirect(url_for("main.index"))
+
+
+@bp.route("/progress")
+def progress():
+    """Seçilen hareketin zaman içindeki en yüksek ağırlık ve hacim grafiği."""
+    db = get_db()
+    workouts = db.execute("SELECT * FROM workouts").fetchall()
+    # Seçim listesi: en çok kaydı olan hareket en üstte.
+    counts = db.execute(
+        "SELECT exercise, COUNT(*) AS n FROM workouts GROUP BY exercise ORDER BY n DESC, exercise"
+    ).fetchall()
+    choices = [r["exercise"] for r in counts]
+    selected = request.args.get("exercise", "").strip() or (choices[0] if choices else "")
+    series = progress_series(workouts, selected) if selected else []
+    return render_template(
+        "progress.html",
+        choices=choices,
+        selected=selected,
+        series=series,
+        weight_chart=build_chart(series, "max_weight"),
+        volume_chart=build_chart(series, "volume"),
+    )
 
 
 @bp.route("/health")

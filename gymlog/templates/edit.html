@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "_macros.html" import workout_form %}
+{% block title %}Kaydı düzenle · GymLog{% endblock %}
+{% block content %}
+<section class="card">
+  <div class="card-head">
+    <h2>Kaydı düzenle</h2>
+    <a class="link-back" href="{{ url_for('main.index') }}">← Kayıtlara dön</a>
+  </div>
+  {{ workout_form(url_for('main.edit_workout', workout_id=workout.id), exercises, equipment, w=workout, submit="Değişiklikleri kaydet") }}
+</section>
+<section class="card danger-zone">
+  <div>
+    <h3>Kaydı sil</h3>
+    <p class="muted">Bu set listeden, hacim toplamlarından ve rekor hesabından kaldırılır. Geri alınamaz.</p>
+  </div>
+  <form method="post" action="{{ url_for('main.delete_workout', workout_id=workout.id) }}" onsubmit="return confirm('Bu kayıt silinsin mi?')">
+    <button type="submit" class="btn-danger">Sil</button>
+  </form>
+</section>
+{% endblock %}

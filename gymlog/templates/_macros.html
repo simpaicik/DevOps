@@ -1,0 +1,14 @@
+{# Ekleme ve düzenleme formlarının ortak alanları #}
+{% macro workout_form(action, exercises, equipment, w=None, submit="Kaydet", today="") %}
+<form class="form-grid" method="post" action="{{ action }}">
+  <label>Tarih <input type="date" name="date" value="{{ w.date if w else today }}" required></label>
+  <label class="wide">Hareket <input name="exercise" list="exercise-list" placeholder="Listeden seç ya da yaz" value="{{ w.exercise if w else '' }}" required></label>
+  <label class="wide">Ekipman / Makine <input name="equipment" list="equipment-list" placeholder="Barbell" value="{{ w.equipment if w else '' }}" required></label>
+  <label>Set <input type="number" name="sets" min="1" value="{{ w.sets if w else 3 }}" required></label>
+  <label>Tekrar <input type="number" name="reps" min="1" value="{{ w.reps if w else 10 }}" required></label>
+  <label>Ağırlık (kg) <input type="number" name="weight_kg" min="0" step="0.5" placeholder="50" value="{{ ('%g' % w.weight_kg if w.weight_kg is number else w.weight_kg) if w else '' }}" required></label>
+  <button type="submit">{{ submit }}</button>
+</form>
+<datalist id="exercise-list">{% for name, group in exercises %}<option value="{{ name }}" label="{{ group }}">{% endfor %}</datalist>
+<datalist id="equipment-list">{% for e in equipment %}<option value="{{ e }}">{% endfor %}</datalist>
+{% endmacro %}
