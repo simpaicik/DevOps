@@ -9,6 +9,29 @@
   <div class="stat stat-accent"><span class="stat-label">Kişisel rekor</span><span class="stat-value">{{ pr_ids | length }}</span></div>
 </section>
 
+<section class="card streak-card" id="streak">
+  <div class="streak-main">
+    <div class="streak-flame{% if not streak.streak %} is-off{% endif %}" aria-hidden="true">🔥</div>
+    <div>
+      <span class="stat-label">Seri</span>
+      <div class="streak-value">{{ streak.streak }} <small>gün</small></div>
+      <span class="muted small">En uzun: {{ streak.best }} gün</span>
+    </div>
+  </div>
+  <div class="streak-week" aria-label="Son 7 gün">
+    {% set gunler = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'] %}
+    {% for d, done in streak.week %}
+    <span class="day{% if done %} done{% endif %}{% if loop.last %} today{% endif %}" title="{{ d.isoformat() }}{% if done %} · antrenman var{% endif %}"><i></i>{{ gunler[d.weekday()] }}</span>
+    {% endfor %}
+  </div>
+  <div class="coin-box">
+    <span class="stat-label">Coin</span>
+    <div class="coin-value" id="coin-balance"><span class="coin" aria-hidden="true"></span>{{ coin_balance }}</div>
+    <span class="muted small" id="coin-hint">{% if streak.trained_today %}Bugünün ödülü alındı (+{{ streak.today_reward }}).{% else %}Bugün antrenman gir: <strong>+{{ streak.today_reward }} coin</strong>{% endif %}
+      {% if streak.days_to_raise %}<br>{{ streak.days_to_raise }} gün sonra günlük ödül {{ streak.next_reward }} coin olur.{% else %}<br>Günlük ödül en üst seviyede.{% endif %}</span>
+  </div>
+</section>
+
 <section class="card" id="template-quick">
   <div class="card-head">
     <h2>Şablondan başla</h2>

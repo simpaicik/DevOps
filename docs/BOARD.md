@@ -69,3 +69,16 @@ antrenmanına yüklenir; şablonlar listelenebilir ve silinebilir.
 - [ ] Tüm değerleri dolu bir şablon "Bugüne yükle" ile bugünün tarihli kayıtlarına eklenir.
 - [ ] Değeri eksik bir şablon yüklenirken önce eksik değerler sorulur; eksikken kayıt eklenmez.
 - [ ] Silinen şablon listeden kalkar, şablondan eklenmiş kayıtlar silinmez.
+
+## 9. Seri (streak) ve coin sistemi
+**Açıklama:** Antrenman kaydı olan ardışık günler seri oluşturur. Antrenman yapılan her gün
+bir kez coin kazanılır; günlük ödül seri uzadıkça haftadan haftaya artar (1–7. gün 10 coin,
+8–14. gün 15 coin, … en fazla 50). Coin bakiyesi ileride market (ör. profil çerçevesi)
+eklenebilecek şekilde hareket geçmişiyle saklanır.
+
+**Kabul kriterleri:**
+- [ ] Bugüne girilen ilk kayıt "+10 coin" bildirimi verir, aynı güne ikinci kayıt coin vermez.
+- [ ] 7 günlük serinin ardından 8. gün ödülü 15 coin olur.
+- [ ] Bir gün boş geçince seri sıfırlanır; bugün henüz kayıt yoksa dünkü seri korunur.
+- [ ] Geçmiş bir tarihe girilen kayıt seriye sayılır ama coin kazandırmaz.
+- [ ] Ana sayfada seri, en uzun seri, son 7 gün ve coin bakiyesi görünür.

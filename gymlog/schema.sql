@@ -26,3 +26,19 @@ CREATE TABLE IF NOT EXISTS template_items (
     reps         INTEGER CHECK (reps IS NULL OR reps > 0),        -- isteğe bağlı
     weight_kg    REAL    CHECK (weight_kg IS NULL OR weight_kg >= 0)  -- isteğe bağlı
 );
+
+-- Coin hareketleri: bakiye = SUM(amount). Şimdilik yalnızca günlük antrenman
+-- ödülü (reason = 'daily', pozitif). İleride market harcamaları negatif tutarlı
+-- satırlar olarak eklenecek; böylece bakiye geçmişiyle birlikte saklanır.
+CREATE TABLE IF NOT EXISTS coin_transactions (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    day         TEXT    NOT NULL,          -- YYYY-MM-DD, ödülün ait olduğu gün
+    amount      INTEGER NOT NULL,
+    reason      TEXT    NOT NULL,          -- 'daily' (ileride ör. 'shop:frame-gold')
+    streak      INTEGER,                   -- ödül anındaki seri uzunluğu
+    created_at  TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Bir gün için günlük ödül yalnızca bir kez verilir.
+CREATE UNIQUE INDEX IF NOT EXISTS coin_daily_once
+    ON coin_transactions (day) WHERE reason = 'daily';
