@@ -155,6 +155,8 @@ th.actions, td.actions { width: 1%; padding-left: 4px; padding-right: 4px; }
 .flash.info { background: var(--accent-soft); color: var(--accent); }
 .flash.pr { background: var(--gold-soft); color: var(--gold); }
 .flash.pr::before { content: "🏆 "; }
+.flash.reward { background: var(--gold-soft); color: var(--gold); }
+.flash.reward::before { content: "🪙 "; }
 
 .empty { text-align: center; color: var(--muted); padding: 24px 0 8px; }
 .empty p { margin: 4px 0; }
@@ -194,9 +196,28 @@ th.actions, td.actions { width: 1%; padding-left: 4px; padding-right: 4px; }
 .template-form .btn-ghost { justify-self: start; }
 .form-foot { display: flex; justify-content: flex-end; }
 
+/* Seri ve coin kartı */
+.streak-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; }
+.streak-main { display: flex; align-items: center; gap: 14px; }
+.streak-flame { font-size: 38px; line-height: 1; filter: drop-shadow(0 2px 6px rgb(249 115 22 / .35)); }
+.streak-flame.is-off { filter: grayscale(1); opacity: .45; }
+.streak-value, .coin-value { font-size: 28px; font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.streak-value small { font-size: 14px; font-weight: 500; color: var(--muted); }
+.streak-week { display: flex; justify-content: center; gap: 10px; }
+.streak-week .day { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); font-weight: 600; }
+.streak-week .day i { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border); background: var(--bg); }
+.streak-week .day.done i { background: #f97316; border-color: #f97316; }
+.streak-week .day.today { color: var(--fg); }
+.streak-week .day.today i { outline: 2px solid color-mix(in srgb, #f97316 40%, transparent); outline-offset: 2px; }
+.coin-box { text-align: right; }
+.coin-value { color: var(--gold); display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
+.coin { width: 20px; height: 20px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fde68a, #f59e0b 60%, #b45309); box-shadow: inset 0 0 0 2px rgb(180 83 9 / .5); }
+
 /* Duyarlı düzen */
 @media (max-width: 860px) {
   .summary-grid, .chart-grid { grid-template-columns: 1fr; }
+  .streak-card { grid-template-columns: 1fr auto; }
+  .streak-week { grid-column: 1 / -1; grid-row: 2; justify-content: space-between; }
   .form-grid { grid-template-columns: repeat(3, 1fr); }
   .form-grid .wide { grid-column: span 3; }
   .form-grid button { grid-column: 1 / -1; }
@@ -211,6 +232,10 @@ th.actions, td.actions { width: 1%; padding-left: 4px; padding-right: 4px; }
   .item-row { grid-template-columns: repeat(3, 1fr) auto; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
   .item-row > label:nth-child(1), .item-row > label:nth-child(2) { grid-column: 1 / -1; }
   .stat-value { font-size: 22px; }
+  .streak-card { grid-template-columns: 1fr; gap: 16px; }
+  .streak-week { grid-row: auto; }
+  .coin-box { text-align: left; }
+  .coin-value { justify-content: flex-start; }
   .tagline { display: none; }
   .picker, .picker label, .picker select { width: 100%; min-width: 0; }
   .chart .tick { font-size: 15px; }

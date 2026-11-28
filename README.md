@@ -31,6 +31,7 @@ görmelerini ve kişisel rekorlarıyla gelişimlerini takip etmelerini sağlar.
 | [#7](https://github.com/simpaicik/DevOps/issues/7) | Ekipman / hareket listesi yönetimi | Devam Ediyor (hazır hareket listesi eklendi) |
 | [#3](https://github.com/simpaicik/DevOps/issues/3) | Hareket ve tarihe göre filtreleme | Yapılacak |
 | 8 | Antrenman şablonları | Tamamlandı (ek özellik) |
+| 9 | Seri (streak) ve coin sistemi | Tamamlandı (ek özellik) |
 
 ## Teknolojiler
 Python 3.10+, Flask, SQLite, pytest, Docker (gunicorn), GitHub Actions (CI)
@@ -160,13 +161,36 @@ Grafikler sunucu tarafında SVG olarak çizilir, internet bağlantısı ya da Ja
 4. Şablonun çöp kutusu simgesine basıp onaylayın.
    - **Beklenen:** şablon listeden kalkar, ondan eklenmiş antrenman kayıtları yerinde kalır.
 
+### Ek özellik: Seri (streak) ve coin sistemi
+Antrenman kaydı olan ardışık günler **seri** oluşturur. Antrenman yapılan her gün bir kez
+**coin** kazanılır; ödül seri uzadıkça haftadan haftaya artar:
+
+| Seri günü | Günlük ödül |
+|---|---|
+| 1–7 | 10 coin |
+| 8–14 | 15 coin |
+| 15–21 | 20 coin |
+| … her hafta +5 | en fazla 50 coin |
+
+1. Bugünün tarihiyle bir antrenman kaydı ekleyin.
+   - **Beklenen:** "+10 coin! 1 günlük seri" mesajı çıkar; ana sayfadaki seri kartında seri 1 gün, bakiye 10 coin olur.
+2. Bugüne ikinci bir kayıt ekleyin.
+   - **Beklenen:** yeni coin verilmez (günlük ödül günde bir kez).
+3. Geçmiş bir tarihe kayıt ekleyin.
+   - **Beklenen:** seri hesabına girer ama coin vermez (sonradan geçmişe kayıt girerek coin toplanamaz).
+
+Bugün henüz antrenman girilmediyse dünkü seri gün sonuna kadar korunur; bir gün boş geçerse seri sıfırlanır.
+Kazanılan coinler silinen kayıtlarla geri alınmaz. Bakiye `coin_transactions` tablosunda hareket geçmişiyle
+saklanır; ileride eklenecek market (ör. profil çerçevesi) harcamaları buraya eksi tutarlı satır olarak yazılacak.
+
 ## Testler ve CI
 ```bash
 pytest -v
 ```
 Her özelliğin kabul kriterleri otomatik testlerle de doğrulanır: `tests/test_workouts.py` (#1),
 `tests/test_volume.py` (#2), `tests/test_records.py` (#5), `tests/test_progress.py` (#4),
-`tests/test_edit_delete.py` (#6), `tests/test_exercises.py` (#7), `tests/test_templates.py` (şablonlar).
+`tests/test_edit_delete.py` (#6), `tests/test_exercises.py` (#7), `tests/test_templates.py` (şablonlar),
+`tests/test_streaks.py` (seri ve coin).
 
 Her push'ta ve pull request'te GitHub Actions (`.github/workflows/ci.yml`) iki iş çalıştırır:
 1. **test**: bağımlılıkları kurar ve `pytest` ile tüm testleri çalıştırır.
@@ -174,7 +198,7 @@ Her push'ta ve pull request'te GitHub Actions (`.github/workflows/ci.yml`) iki i
 
 ## Proje yapısı
 ```
-gymlog/            Flask uygulaması (routes, veritabanı, hacim, rekor ve ilerleme hesapları, şablonlar, CSS)
+gymlog/            Flask uygulaması (routes, veritabanı, hacim, rekor ve ilerleme hesapları, şablonlar, seri ve coin, CSS)
 tests/             pytest testleri
 docs/BOARD.md      Pano kartlarının metinleri
 Dockerfile         Üretim imajı (gunicorn)

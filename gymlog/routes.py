@@ -2,10 +2,12 @@ from datetime import date
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 
+from . import coins
 from .db import get_db
 from .exercises import EXERCISES_BY_GROUP
 from .progress import build_chart, progress_series
 from .records import best_lifts, personal_record_ids
+from .streaks import streak_status
 from .volume import daily_totals, exercise_totals, workout_volume
 from .workout_templates import form_rows, is_complete, validate_template, workouts_for_day
 
@@ -92,6 +94,8 @@ def index():
         best=best_lifts(workouts),
         today=date.today().isoformat(),
         templates=load_templates(db),
+        streak=streak_status(coins.workout_days(db), date.today()),
+        coin_balance=coins.balance(db),
     )
 
 
@@ -124,6 +128,15 @@ def insert_workouts(rows):
     for workout_id, data in new_ids.items():
         if workout_id in prs:
             flash(f"Yeni kişisel rekor! {data['exercise']}: {data['weight_kg']:g} kg", "pr")
+    flash_daily_coins(db)
+
+
+def flash_daily_coins(db):
+    """Bugünün ilk antrenmanı girildiyse günlük coin ödülünü verir ve bildirir."""
+    award = coins.award_daily(db)
+    if award:
+        amount, streak = award
+        flash(f"+{amount} coin! {streak} günlük seri. Bakiye: {coins.balance(db)} coin", "reward")
 
 
 @bp.route("/workouts/<int:workout_id>/edit", methods=["GET", "POST"])
@@ -141,6 +154,7 @@ def edit_workout(workout_id):
             )
             db.commit()
             flash(f"{data['exercise']} kaydı güncellendi.", "success")
+            flash_daily_coins(db)
             return redirect(url_for("main.index"))
         for e in errors:
             flash(e, "error")
