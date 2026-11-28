@@ -152,12 +152,47 @@ th.actions, td.actions { width: 1%; padding-left: 4px; padding-right: 4px; }
 .flash { padding: 11px 14px; border-radius: 10px; font-weight: 550; box-shadow: var(--shadow); }
 .flash.success { background: var(--ok-bg); color: var(--ok-fg); }
 .flash.error { background: var(--err-bg); color: var(--err-fg); }
+.flash.info { background: var(--accent-soft); color: var(--accent); }
 .flash.pr { background: var(--gold-soft); color: var(--gold); }
 .flash.pr::before { content: "🏆 "; }
 
 .empty { text-align: center; color: var(--muted); padding: 24px 0 8px; }
 .empty p { margin: 4px 0; }
 .footer { color: var(--muted); font-size: 13px; padding-top: 12px; padding-bottom: 32px; text-align: center; }
+
+/* Şablonlar */
+.small { font-size: 13px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips form { margin: 0; }
+.chip { background: var(--accent-soft); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); padding: 8px 14px; }
+.chip:hover { background: var(--accent); color: #fff; }
+.chip small { font-weight: 500; opacity: .8; margin-left: 4px; }
+@media (prefers-color-scheme: dark) { .chip { color: var(--accent); } .chip:hover { color: #0d1117; } }
+.btn-ghost { background: transparent; color: var(--accent); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--accent-soft); }
+@media (prefers-color-scheme: dark) { .btn-ghost { color: var(--accent); } }
+.template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.template-card { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; background: var(--bg); display: flex; flex-direction: column; gap: 10px; }
+.template-card .card-head { margin-bottom: 0; }
+.template-card h3 { margin: 0; }
+.template-card .card-head form, .template-actions form { margin: 0; }
+.template-card p { margin: 0; }
+.template-items { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; }
+.template-items .ti { display: flex; justify-content: space-between; gap: 10px; }
+.template-items li::marker { color: var(--muted); }
+.template-items .num { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--muted); }
+.template-actions button { white-space: nowrap; }
+#template-quick p { margin: 10px 0 0; }
+.picker label { white-space: nowrap; }
+.template-actions { display: flex; align-items: center; gap: 14px; margin-top: auto; }
+.template-form { display: grid; gap: 12px; }
+.template-form p { margin: 0; }
+.name-field { max-width: 320px; }
+.item-rows { display: grid; gap: 8px; }
+.item-row { display: grid; grid-template-columns: 1.8fr 1.6fr .8fr .8fr .9fr auto; gap: 8px; align-items: center; }
+.item-head span { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; }
+.template-form .btn-ghost { justify-self: start; }
+.form-foot { display: flex; justify-content: flex-end; }
 
 /* Duyarlı düzen */
 @media (max-width: 860px) {
@@ -170,6 +205,11 @@ th.actions, td.actions { width: 1%; padding-left: 4px; padding-right: 4px; }
   .stats { grid-template-columns: repeat(2, 1fr); }
   .form-grid { grid-template-columns: repeat(2, 1fr); }
   .form-grid .wide { grid-column: 1 / -1; }
+  .item-head { display: none; }
+  .card-head .picker { flex-wrap: wrap; }
+  .picker label { flex-direction: column; align-items: stretch; gap: 6px; }
+  .item-row { grid-template-columns: repeat(3, 1fr) auto; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .item-row > label:nth-child(1), .item-row > label:nth-child(2) { grid-column: 1 / -1; }
   .stat-value { font-size: 22px; }
   .tagline { display: none; }
   .picker, .picker label, .picker select { width: 100%; min-width: 0; }

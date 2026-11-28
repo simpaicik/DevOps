@@ -9,6 +9,25 @@
   <div class="stat stat-accent"><span class="stat-label">Kişisel rekor</span><span class="stat-value">{{ pr_ids | length }}</span></div>
 </section>
 
+<section class="card" id="template-quick">
+  <div class="card-head">
+    <h2>Şablondan başla</h2>
+    <a class="link-back" href="{{ url_for('main.templates') }}">Şablonları yönet →</a>
+  </div>
+  {% if templates %}
+  <div class="chips">
+  {% for t in templates %}
+    <form method="post" action="{{ url_for('main.apply_template', template_id=t.id) }}">
+      <button type="submit" class="chip" title="{{ t['items'] | map(attribute='exercise') | join(', ') }}">{{ t.name }} <small>{{ t['items'] | length }} hareket{% if not t.complete %} · değer gir{% endif %}</small></button>
+    </form>
+  {% endfor %}
+  </div>
+  <p class="muted small">Tıkladığınız şablonun hareketleri bugünün tarihiyle kayıtlara eklenir.</p>
+  {% else %}
+  <p class="muted small">Henüz şablon yok. Sık yaptığınız antrenmanı (ör. "Push günü") <a class="link-back" href="{{ url_for('main.templates') }}">şablon olarak kaydedin</a>, sonra tek tıkla bugüne yükleyin.</p>
+  {% endif %}
+</section>
+
 <section class="card">
   <h2>Yeni antrenman kaydı</h2>
   {{ workout_form(url_for('main.add_workout'), exercises, equipment, today=today) }}
