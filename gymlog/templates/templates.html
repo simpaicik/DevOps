@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "_template_rows.html" import item_rows %}
+{% block title %}Şablonlar · GymLog{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Kayıtlı şablonlar</h2>
+  {% if templates %}
+  <div class="template-grid" id="template-list">
+  {% for t in templates %}
+    <article class="template-card">
+      <div class="card-head">
+        <h3>{{ t.name }}</h3>
+        <form method="post" action="{{ url_for('main.delete_template', template_id=t.id) }}" data-confirm="&quot;{{ t.name }}&quot; şablonu silinsin mi?" onsubmit="return confirm(this.dataset.confirm)">
+          <button type="submit" class="icon-btn danger" title="Şablonu sil" aria-label="{{ t.name }} şablonunu sil"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+        </form>
+      </div>
+      <ol class="template-items">
+      {% for i in t['items'] %}
+        <li><div class="ti"><span><span class="exercise">{{ i.exercise }}</span> <span class="muted">{{ i.equipment }}</span></span>
+          <span class="num">{% if i.sets is not none %}{{ i.sets }}{% else %}–{% endif %} × {% if i.reps is not none %}{{ i.reps }}{% else %}–{% endif %} × {% if i.weight_kg is not none %}{{ '%g' % i.weight_kg }} kg{% else %}– kg{% endif %}</span></div></li>
+      {% endfor %}
+      </ol>
+      <div class="template-actions">
+        <form method="post" action="{{ url_for('main.apply_template', template_id=t.id) }}">
+          <button type="submit">Bugüne yükle</button>
+        </form>
+        <a class="link-back" href="{{ url_for('main.start_template', template_id=t.id) }}">Düzenleyerek başla</a>
+      </div>
+      {% if not t.complete %}<p class="muted small">Bazı değerler boş; "Bugüne yükle" önce bunları sorar.</p>{% endif %}
+    </article>
+  {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">
+    <p><strong>Henüz şablon yok.</strong></p>
+    <p>Aşağıdan ilk şablonunuzu oluşturun.</p>
+  </div>
+  {% endif %}
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h2>Yeni şablon</h2>
+    {% if days %}
+    <form class="picker" method="get" action="{{ url_for('main.templates') }}">
+      <label>Bir günden doldur
+        <select name="from_date">{% for d in days %}<option value="{{ d }}"{% if d == request.args.get('from_date') %} selected{% endif %}>{{ d }}</option>{% endfor %}</select>
+      </label>
+      <button type="submit" class="btn-ghost">Doldur</button>
+    </form>
+    {% endif %}
+  </div>
+  <form method="post" action="{{ url_for('main.templates') }}" class="template-form">
+    <label class="name-field">Şablon adı <input name="name" placeholder="ör. Push günü" value="{{ name }}" required></label>
+    <p class="muted small">Set, tekrar ve ağırlık isteğe bağlıdır. Boş bıraktıklarınızı şablonu yüklerken girersiniz.</p>
+    {{ item_rows(rows) }}
+    <div class="form-foot"><button type="submit">Şablonu kaydet</button></div>
+  </form>
+  <datalist id="exercise-list">{% for n, group in exercises %}<option value="{{ n }}" label="{{ group }}">{% endfor %}</datalist>
+  <datalist id="equipment-list">{% for e in equipment %}<option value="{{ e }}">{% endfor %}</datalist>
+</section>
+{% endblock %}

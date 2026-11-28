@@ -30,6 +30,7 @@ görmelerini ve kişisel rekorlarıyla gelişimlerini takip etmelerini sağlar.
 | [#6](https://github.com/simpaicik/DevOps/issues/6) | Kayıt düzenleme ve silme | Tamamlandı (ek özellik) |
 | [#7](https://github.com/simpaicik/DevOps/issues/7) | Ekipman / hareket listesi yönetimi | Devam Ediyor (hazır hareket listesi eklendi) |
 | [#3](https://github.com/simpaicik/DevOps/issues/3) | Hareket ve tarihe göre filtreleme | Yapılacak |
+| 8 | Antrenman şablonları | Tamamlandı (ek özellik) |
 
 ## Teknolojiler
 Python 3.10+, Flask, SQLite, pytest, Docker (gunicorn), GitHub Actions (CI)
@@ -146,13 +147,26 @@ Düzenleme ve silme sonrasında PR rozetleri ve kişisel rekorlar da yeniden hes
 Aynı gün birden fazla set girildiyse grafikte o günün en yüksek ağırlığı ve toplam hacmi tek nokta olarak gösterilir.
 Grafikler sunucu tarafında SVG olarak çizilir, internet bağlantısı ya da JavaScript kütüphanesi gerekmez.
 
+### Ek özellik: Antrenman şablonları
+1. Üst menüden **Şablonlar** sayfasına geçin. **Şablon adı** `Push günü` yazın, satırlara
+   `Bench Press` / `Barbell` / 3 / 8 / 60 ve `Overhead Press` / `Barbell` / 3 / 10 / 40 girip **Şablonu kaydet**'e basın.
+   (Daha fazla hareket için **+ Satır ekle**; daha önceki bir günün kayıtlarından doldurmak için **Bir günden doldur**.)
+   - **Beklenen:** "şablonu kaydedildi (2 hareket)" mesajı çıkar, şablon hareketleriyle birlikte listelenir.
+2. **Bugüne yükle**'ye basın (ana sayfadaki **Şablondan başla** kartındaki düğme de aynı işi yapar).
+   - **Beklenen:** bugünün tarihiyle 2 kayıt eklenir, hacimleri `1440` ve `1200` olur.
+3. Set/tekrar/ağırlığı boş bırakılmış bir şablon kaydedip (ör. `Bacak günü`, `Back Squat` / `Barbell`, yalnızca Set `4`) **Bugüne yükle**'ye basın.
+   - **Beklenen:** kayıt eklenmeden önce değerleri doldurma sayfası açılır. Değerleri girip **Hepsini kaydet** ile kaydedin;
+     yapmadığınız hareketin satırını ✕ ile temizlerseniz o satır kaydedilmez.
+4. Şablonun çöp kutusu simgesine basıp onaylayın.
+   - **Beklenen:** şablon listeden kalkar, ondan eklenmiş antrenman kayıtları yerinde kalır.
+
 ## Testler ve CI
 ```bash
 pytest -v
 ```
 Her özelliğin kabul kriterleri otomatik testlerle de doğrulanır: `tests/test_workouts.py` (#1),
 `tests/test_volume.py` (#2), `tests/test_records.py` (#5), `tests/test_progress.py` (#4),
-`tests/test_edit_delete.py` (#6), `tests/test_exercises.py` (#7).
+`tests/test_edit_delete.py` (#6), `tests/test_exercises.py` (#7), `tests/test_templates.py` (şablonlar).
 
 Her push'ta ve pull request'te GitHub Actions (`.github/workflows/ci.yml`) iki iş çalıştırır:
 1. **test**: bağımlılıkları kurar ve `pytest` ile tüm testleri çalıştırır.

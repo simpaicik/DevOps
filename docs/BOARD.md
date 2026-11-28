@@ -58,3 +58,14 @@ Kayıt formu bu listelerden seçim önerir.
 
 **Kabul kriterleri:**
 - [ ] Yeni eklenen ekipman kayıt formundaki öneriler arasında görünür.
+
+## 8. Antrenman şablonları
+**Açıklama:** Kullanıcı sık yaptığı antrenmanı (ör. "Push günü") hareket listesi olarak
+şablona kaydeder. Set, tekrar ve ağırlık isteğe bağlıdır. Şablon tek tıkla bugünün
+antrenmanına yüklenir; şablonlar listelenebilir ve silinebilir.
+
+**Kabul kriterleri:**
+- [ ] Kaydedilen şablon, hareketleriyle birlikte Şablonlar sayfasında listelenir.
+- [ ] Tüm değerleri dolu bir şablon "Bugüne yükle" ile bugünün tarihli kayıtlarına eklenir.
+- [ ] Değeri eksik bir şablon yüklenirken önce eksik değerler sorulur; eksikken kayıt eklenmez.
+- [ ] Silinen şablon listeden kalkar, şablondan eklenmiş kayıtlar silinmez.

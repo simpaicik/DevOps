@@ -1,0 +1,19 @@
+{# Şablon ve şablondan başlatma formlarındaki hareket satırları #}
+{% macro item_rows(rows) %}
+<div class="item-rows" data-rows>
+  <div class="item-row item-head" aria-hidden="true">
+    <span>Hareket</span><span>Ekipman / Makine</span><span>Set</span><span>Tekrar</span><span>Kg</span><span></span>
+  </div>
+  {% for r in rows %}
+  <div class="item-row">
+    <label><span class="sr-only">Hareket</span><input name="exercise" list="exercise-list" placeholder="Hareket" value="{{ r.exercise or '' }}"></label>
+    <label><span class="sr-only">Ekipman</span><input name="equipment" list="equipment-list" placeholder="Ekipman" value="{{ r.equipment or '' }}"></label>
+    <label><span class="sr-only">Set</span><input type="number" name="sets" min="1" placeholder="Set" value="{{ r.sets if r.sets is not none else '' }}"></label>
+    <label><span class="sr-only">Tekrar</span><input type="number" name="reps" min="1" placeholder="Tekrar" value="{{ r.reps if r.reps is not none else '' }}"></label>
+    <label><span class="sr-only">Ağırlık (kg)</span><input type="number" name="weight_kg" min="0" step="0.5" placeholder="Kg" value="{{ ('%g' % r.weight_kg if r.weight_kg is number else r.weight_kg) if r.weight_kg is not none else '' }}"></label>
+    <button type="button" class="icon-btn danger" title="Satırı temizle" aria-label="Satırı temizle" onclick="this.closest('.item-row').querySelectorAll('input').forEach(i => i.value = '')"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  {% endfor %}
+</div>
+<button type="button" class="btn-ghost" onclick="const box = this.previousElementSibling, row = box.lastElementChild.cloneNode(true); row.querySelectorAll('input').forEach(i => i.value = ''); box.appendChild(row); row.querySelector('input').focus()">+ Satır ekle</button>
+{% endmacro %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "_template_rows.html" import item_rows %}
+{% block title %}{{ template.name }} · GymLog{% endblock %}
+{% block content %}
+<section class="card">
+  <div class="card-head">
+    <h2>{{ template.name }}: antrenmana başla</h2>
+    <a class="link-back" href="{{ url_for('main.templates') }}">← Şablonlara dön</a>
+  </div>
+  <form method="post" action="{{ url_for('main.start_template', template_id=template.id) }}" class="template-form">
+    <label class="name-field">Tarih <input type="date" name="date" value="{{ day }}" required></label>
+    <p class="muted small">Bugün yaptığınız değerleri girin. Yapmadığınız hareketin satırını temizleyin, kaydedilmez. Şablonun kendisi değişmez.</p>
+    {{ item_rows(rows) }}
+    <div class="form-foot"><button type="submit">Hepsini kaydet</button></div>
+  </form>
+  <datalist id="exercise-list">{% for n, group in exercises %}<option value="{{ n }}" label="{{ group }}">{% endfor %}</datalist>
+  <datalist id="equipment-list">{% for e in equipment %}<option value="{{ e }}">{% endfor %}</datalist>
+</section>
+{% endblock %}
